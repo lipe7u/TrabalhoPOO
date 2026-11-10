@@ -29,6 +29,16 @@ public class Animal {
             EstadoSaude estadoSaude,
             LocalDate dataResgate) {
 
+        if (dataResgate == null || dataResgate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Data de resgate inválida.");
+        }
+
+        if (estadoSaude == null) {
+            throw new IllegalArgumentException(
+                    "O estado de saúde é obrigatório."
+            );
+        }
+
         this.id = proximoId++;
 
         setNome(nome);
@@ -36,12 +46,8 @@ public class Animal {
         setRaca(raca);
         setIdade(idade);
         setPorte(porte);
-        setEstadoSaude(estadoSaude);
 
-        if (dataResgate == null || dataResgate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Data de resgate inválida.");
-        }
-
+        this.estadoSaude = estadoSaude;
         this.dataResgate = dataResgate;
 
         this.statusAdocao = estadoSaude == EstadoSaude.CRITICO
@@ -127,26 +133,9 @@ public class Animal {
         return estadoSaude;
     }
 
-    public void setEstadoSaude(EstadoSaude estadoSaude) {
-        if (estadoSaude == null) {
-            throw new IllegalArgumentException(
-                    "O estado de saúde é obrigatório."
-            );
-        }
-
-        this.estadoSaude = estadoSaude;
-
-        if (estadoSaude == EstadoSaude.CRITICO) {
-            this.statusAdocao = StatusAdocao.INDISPONIVEL;
-        } else if (this.statusAdocao == StatusAdocao.INDISPONIVEL) {
-            this.statusAdocao = StatusAdocao.DISPONIVEL;
-        }
-    }
-
     public LocalDate getDataResgate() {
         return dataResgate;
     }
-
 
     public StatusAdocao getStatusAdocao() {
         return statusAdocao;
@@ -162,11 +151,41 @@ public class Animal {
         if (estadoSaude == EstadoSaude.CRITICO
                 && statusAdocao == StatusAdocao.DISPONIVEL) {
             throw new IllegalStateException(
-                    "Animais em estado crítico não podem ser disponibilizados."
+                    "Animal em estado crítico não pode estar disponível para adoção."
             );
         }
 
         this.statusAdocao = statusAdocao;
+    }
+
+    public void atualizarEstadoSaude(
+            EstadoSaude estadoSaude,
+            Veterinario veterinario
+    ) {
+        if (veterinario == null) {
+            throw new IllegalArgumentException(
+                    "Um veterinário é obrigatório para atualizar a saúde."
+            );
+        }
+
+        if (estadoSaude == null) {
+            throw new IllegalArgumentException(
+                    "Estado de saúde obrigatório."
+            );
+        }
+
+        this.estadoSaude = estadoSaude;
+
+        if (estadoSaude == EstadoSaude.CRITICO
+                && statusAdocao != StatusAdocao.ADOTADO) {
+
+            this.statusAdocao = StatusAdocao.INDISPONIVEL;
+
+        } else if (estadoSaude != EstadoSaude.CRITICO
+                && statusAdocao == StatusAdocao.INDISPONIVEL) {
+
+            this.statusAdocao = StatusAdocao.DISPONIVEL;
+        }
     }
 
     public static int getTotalIdsGerados() {
