@@ -44,4 +44,13 @@ public abstract class Usuario implements Autenticavel {
     public static int getTotalIdsGerados(){
         return proximoId - 1;
     }
+
+    @Override
+    public String toString(){
+        return  "ID: " + id
+                + " | Nome: " + nome
+                + " | Email: " + email
+                + " | Tipo: " + getTipoUsuario();
+    }
+
 }

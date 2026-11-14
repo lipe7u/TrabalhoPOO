@@ -3,6 +3,7 @@ package service;
 import exception.AnimalNaoEncontradoException;
 import exception.RegraNegocioException;
 import model.Animal;
+import model.Veterinario;
 import model.enums.*;
 
 import repository.BancoMemoria;
@@ -96,7 +97,8 @@ public class AnimalService {
             String raca,
             int idade,
             Porte porte,
-            EstadoSaude estadoSaude) {
+            EstadoSaude estadoSaude,
+            Veterinario veterinario) {
 
         Animal animal = buscarPorId(id);
 
@@ -104,7 +106,7 @@ public class AnimalService {
         animal.setRaca(raca);
         animal.setIdade(idade);
         animal.setPorte(porte);
-        animal.setEstadoSaude(estadoSaude);
+        animal.atualizarEstadoSaude(estadoSaude, veterinario);
     }
 
     public void removerAnimal(int id) {
